@@ -1,0 +1,47 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+services:
+  disasterresourceallocation:
+    image: disasterresourceallocation
+    build:
+      context: .
+      dockerfile: DisasterResourceAllocation/Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      dra-redis:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=DisasterResourceAllocation;Username=postgres;Password=P@ssw0rd
+      ConnectionStrings__Redis: dra-redis:6379
+  dra-redis:
+    image: redis:7
+    container_name: dra-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  postgres:
+    image: postgres:14
+    container_name: dra-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: P@ssw0rd
+      POSTGRES_DB: DisasterResourceAllocation
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvolume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U draadmin -d disastor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  pgvolume:
+
