@@ -1,3 +1,5 @@
+DEMO ทดสอบบน azure
+https://1stregistry-ajgdfxa6g7aqdzfs.eastasia-01.azurewebsites.net/swagger/index.html
 วิดีโออธิบายแบบทดสอบ
 https://youtu.be/0_kLn1mdE7Y
 flow: post assignment
